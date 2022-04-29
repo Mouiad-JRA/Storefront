@@ -5,4 +5,4 @@ from django.shortcuts import render
 # Create your views here.
 
 def say_hello(request):
-    return HttpResponse('<H1> Hello world</H1>')
+    return render(request, "hello.html", {"name": "momo"})

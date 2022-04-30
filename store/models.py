@@ -6,6 +6,9 @@ from django.utils.timezone import now
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
+    featured_product = models.ForeignKey('Product',
+                                         on_delete=models.SET_NULL,
+                                         null=True, related_name='+')
 
 
 class Promotion(models.Model):
@@ -37,7 +40,7 @@ class Customer(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
-    membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
+    membership = models.CharField(max_length=2, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
 
 
 class Order(models.Model):

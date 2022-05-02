@@ -1,8 +1,10 @@
 from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
 
+from tags.models import TaggedItem
 from . import models
 
 
@@ -20,6 +22,14 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=10)
 
 
+class TagInline(GenericTabularInline):
+    autocomplete_fields = ['tag']
+    model = TaggedItem
+    min = 1
+    max_num = 10
+    extra = 0
+
+
 class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields = ['collection']
     prepopulated_fields = {
@@ -31,6 +41,8 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 10
     list_filter = ['collection', 'last_update', InventoryFilter]
     list_select_related = ['collection']
+    search_fields = ['title']
+    inlines = [TagInline]
 
     @admin.display(ordering='inventory')
     def inventory_status(self, product):
@@ -57,11 +69,20 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
 
 
+class OrderItemInline(admin.StackedInline):
+    autocomplete_fields = ['product']
+    model = models.OrderItem
+    min = 1
+    max_num = 10
+    extra = 0
+
+
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['placed_at', 'payment_status', 'customer_first_name']
     list_per_page = 10
     autocomplete_fields = ['customer']
     list_select_related = ['customer']
+    inlines = [OrderItemInline]
 
     def customer_first_name(self, order):
         return order.customer.first_name

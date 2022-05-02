@@ -16,7 +16,7 @@ class TagInline(GenericTabularInline):
 
 class CustomerProductAdmin(admin.ModelAdmin):
     inlines = [TagInline]
-
+    search_fields = ['title']
 
 admin.site.unregister(Product)
 admin.site.register(Product, CustomerProductAdmin)
